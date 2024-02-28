@@ -1,11 +1,21 @@
-import express from "express";
+import express, { Express, Request, Response } from "express";
+import { PORT } from "./secrets";
+import rootRouter from "./routes";
+import { PrismaClient } from "@prisma/client";
+import { errorMiddleware } from "./middlewares/errors";
 
 const app = express();
 
-app.get("/", (req, res) => {
-  res.send("Working");
+app.use(express.json());
+
+app.use("/api", rootRouter);
+
+export const prismaClient = new PrismaClient({
+  log: ["query"],
 });
 
-app.listen(3000, () => {
+app.use(errorMiddleware);
+
+app.listen(PORT, () => {
   console.log("Working");
 });
